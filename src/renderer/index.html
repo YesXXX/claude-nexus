@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <!-- 只允许加载应用自带的脚本与样式，禁止内联脚本、外部资源与网络请求；样式允许内联（终端与布局按需写 style） -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'none'; object-src 'none'; frame-src 'none'; base-uri 'none'; form-action 'none'" />
+  <title>Claude Nexus</title>
+  <link rel="stylesheet" href="renderer.css" />
+  <link rel="stylesheet" href="skins.css" />
+  <link rel="stylesheet" href="views/panes.css" />
+  <link rel="stylesheet" href="features/annotations/annotations.css" />
+  <link rel="stylesheet" href="features/revert/revert.css" />
+  <link rel="stylesheet" href="features/editor-jump/editor-jump.css" />
+  <link rel="stylesheet" href="features/presets/presets.css" />
+  <link rel="stylesheet" href="features/finish/finish.css" />
+  <link rel="stylesheet" href="features/term-search/term-search.css" />
+  <link rel="stylesheet" href="features/templates/templates.css" />
+  <link rel="stylesheet" href="features/verify/verify.css" />
+  <link rel="stylesheet" href="features/batch/batch.css" />
+  <link rel="stylesheet" href="features/history/history.css" />
+  <link rel="stylesheet" href="features/timeline/timeline.css" />
+  <link rel="stylesheet" href="features/remote-notify/remote-notify.css" />
+  <link rel="stylesheet" href="features/settings/settings.css" />
+  <link rel="stylesheet" href="features/appearance/appearance.css" />
+  <link rel="stylesheet" href="vendor/xterm.css" />
+</head>
+<body>
+  <!-- 状态图标：形状 + 颜色双重编码（颜色由 .si.st-* 的 color 经 currentColor 传入） -->
+  <svg width="0" height="0" class="svg-defs" aria-hidden="true">
+    <defs>
+      <symbol id="s-running" viewBox="0 0 14 14"><circle cx="7" cy="7" r="6" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M7 3a4 4 0 0 1 0 8Z" fill="currentColor"/></symbol>
+      <symbol id="s-waiting_permission" viewBox="0 0 14 14"><circle cx="7" cy="7" r="6" fill="currentColor"/><path d="M7 3.6v4.2M7 9.6v.6" style="stroke:var(--icon-ink-perm)" stroke-width="1.6" stroke-linecap="round"/></symbol>
+      <symbol id="s-waiting_input" viewBox="0 0 14 14"><circle cx="7" cy="7" r="6" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="4.5" cy="7" r=".9" fill="currentColor"/><circle cx="7" cy="7" r=".9" fill="currentColor"/><circle cx="9.5" cy="7" r=".9" fill="currentColor"/></symbol>
+      <symbol id="s-completed" viewBox="0 0 14 14"><circle cx="7" cy="7" r="6" fill="currentColor"/><path d="m4.4 7.2 1.8 1.8 3.6-3.8" fill="none" style="stroke:var(--icon-ink)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+      <symbol id="s-error" viewBox="0 0 14 14"><circle cx="7" cy="7" r="6" fill="currentColor"/><path d="m5 5 4 4M9 5l-4 4" style="stroke:var(--icon-ink)" stroke-width="1.5" stroke-linecap="round"/></symbol>
+      <symbol id="s-disconnected" viewBox="0 0 14 14"><circle cx="7" cy="7" r="6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="2.2 2"/></symbol>
+      <symbol id="s-suspended" viewBox="0 0 14 14"><circle cx="7" cy="7" r="6" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M5.6 4.8v4.4M8.4 4.8v4.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol>
+      <symbol id="s-mp-r" viewBox="0 0 14 14"><rect x="1.5" y="2.5" width="11" height="9" rx="1.6" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M7.6 2.5v9" stroke="currentColor" stroke-width="1.3"/><rect x="7.6" y="2.5" width="4.9" height="9" fill="currentColor" opacity=".35"/></symbol>
+      <symbol id="s-mp-d" viewBox="0 0 14 14"><rect x="2.5" y="1.5" width="9" height="11" rx="1.6" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M2.5 7.6h9" stroke="currentColor" stroke-width="1.3"/><rect x="2.5" y="7.6" width="9" height="4.9" fill="currentColor" opacity=".35"/></symbol>
+      <symbol id="s-mp-max" viewBox="0 0 14 14"><path d="M2.6 8.6v2.8h2.8M11.4 5.4V2.6H8.6M2.6 11.4l3.6-3.6M11.4 2.6 7.8 6.2" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+      <symbol id="s-mp-x" viewBox="0 0 14 14"><path d="M3.6 3.6l6.8 6.8M10.4 3.6l-6.8 6.8" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol>
+      <symbol id="s-mp-grid" viewBox="0 0 14 14"><rect x="1.6" y="1.6" width="4.7" height="4.7" rx="1" fill="currentColor" opacity=".9"/><rect x="7.7" y="1.6" width="4.7" height="4.7" rx="1" fill="currentColor" opacity=".38"/><rect x="1.6" y="7.7" width="4.7" height="4.7" rx="1" fill="currentColor" opacity=".38"/><rect x="7.7" y="7.7" width="4.7" height="4.7" rx="1" fill="currentColor" opacity=".9"/></symbol>
+    </defs>
+  </svg>
+
+  <div id="app" class="app">
+    <!-- 自绘标题栏：整条可拖动窗口，右侧留给系统绘制的最小化 / 最大化 / 关闭按钮 -->
+    <header id="titlebar" class="titlebar">
+      <div class="tb-brand"><span class="logo" aria-hidden="true">
+        <svg width="14" height="14" viewBox="0 0 22 22" fill="none" style="stroke:var(--btn-pri-fg)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="6,17 6,5 16,17 16,5"/></svg>
+      </span></div>
+      <button type="button" id="btn-palette" class="tb-search" title="命令面板（Ctrl+K）">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <span class="tb-search-t">搜索会话或执行命令</span>
+      </button>
+    </header>
+
+    <!-- 图标导航轨 -->
+    <nav id="rail" class="rail" aria-label="导航">
+      <button type="button" id="btn-inbox" class="ri" title="跳到等待处理的会话（Alt+Shift+C）">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.5 5h13L22 12v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-6Z"/></svg>
+        <span id="inbox-badge" class="badge" hidden></span>
+      </button>
+      <span class="sp"></span>
+      <button type="button" id="btn-inspector" class="ri" title="显示 / 隐藏属性面板">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/></svg>
+      </button>
+      <button type="button" id="btn-update" class="ri btn-update" title="检查更新">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3m0 0-4 4m4-4 4 4"/><path d="M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></svg>
+        <span class="upd-dot"></span>
+      </button>
+    </nav>
+
+    <!-- 工作区：列表 + 详情 + 属性面板嵌在一块圆角面板里，与外框分层 -->
+    <div class="shell">
+    <!-- 会话列表：按状态分组，序号对应 Ctrl+1~9 -->
+    <section id="list-col" class="col" aria-label="会话列表">
+      <div class="col-h">
+        <span class="col-title">会话</span><span id="sidebar-count" class="col-count"></span>
+        <span class="sp"></span>
+        <button type="button" id="btn-new" class="col-new" title="新建会话（Ctrl+N）" aria-label="新建会话">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+        </button>
+      </div>
+      <div id="sidebar-filters" class="seg" role="group" aria-label="状态筛选"></div>
+      <div id="session-list" class="rows"></div>
+    </section>
+
+    <main id="main" class="detail">
+      <!-- 首页：没有选中会话时即新建会话入口 -->
+      <div id="main-empty" class="home">
+        <h2 class="home-title">今天要让 Claude 做什么？</h2>
+        <form id="new-session-form" class="home-box" autocomplete="off">
+          <input id="form-label" class="home-label" placeholder="任务标签，例如：重构用户模块" list="label-history" />
+          <div id="form-prompt-tools" class="home-prompt-tools"></div>
+          <textarea id="form-prompt" class="home-prompt" rows="3" spellcheck="false"
+            placeholder="首条提示词（可选）"></textarea>
+          <div class="home-row">
+            <label class="cwd-pick" title="工作目录">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M3 6a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></svg>
+              <input id="form-cwd" placeholder="工作目录 D:\path\to\project" list="cwd-history" />
+            </label>
+            <button type="button" id="btn-browse" class="btn pill">浏览…</button>
+            <span class="home-hint"></span>
+            <button type="submit" class="send" title="创建会话（Enter；在提示词里按 Ctrl+Enter）" aria-label="创建会话">↑</button>
+          </div>
+          <div id="wt-row" class="wt-row" hidden>
+            <label id="wt-toggle" class="wt-toggle">
+              <input type="checkbox" id="wt-on" />
+              <span class="wt-switch" aria-hidden="true"></span>
+              <span>独立工作区</span>
+            </label>
+            <span id="wt-fields" class="wt-fields" hidden>
+              <label class="wt-field"><span>分支</span><input id="wt-branch" placeholder="留空自动生成 nexus/…" spellcheck="false" /></label>
+              <label class="wt-field"><span>基于</span><input id="wt-base" placeholder="当前分支" spellcheck="false" /></label>
+              <label class="wt-field wt-count-field" title="同一条首条提示词派发给多个独立工作区，比较后保留其一"><span>并行方案数</span><input id="wt-count" type="number" min="1" max="6" step="1" value="1" /></label>
+            </span>
+            <span id="wt-busy" class="wt-busy" hidden>正在创建工作区…</span>
+          </div>
+          <div id="wt-note" class="wt-note" hidden></div>
+          <div id="batch-note" class="wt-note batch-note" hidden></div>
+          <datalist id="cwd-history"></datalist>
+          <datalist id="label-history"></datalist>
+        </form>
+        <div id="form-error" class="form-error" role="alert"></div>
+        <div id="recent-cwds" class="recent"></div>
+        <div id="recent-ended" class="recent-ended" hidden></div>
+      </div>
+
+      <!-- 父会话 -->
+      <div id="main-pane" class="pane" hidden>
+        <header id="pane-header" class="d-h">
+          <div class="crumb">
+            <span id="pane-project" class="crumb-dim"></span><span class="crumb-sep">›</span>
+            <b id="pane-label" class="crumb-cur"></b>
+            <span id="pane-ro" class="tagx" hidden>只读</span>
+            <span id="pane-wt" class="tagx wt-tag" hidden></span>
+          </div>
+          <span id="pane-status" class="status-pill"></span>
+          <div id="pane-actions" class="pane-actions"></div>
+        </header>
+        <div class="stage">
+          <div id="pane-tabs" class="pane-tabs" role="tablist">
+            <!-- 标签按钮由详情标签注册表生成，插在右侧提示之前；提示只在多窗格时出现 -->
+            <span id="pane-tabs-hint" class="pane-tabs-hint"></span>
+          </div>
+          <div id="pane-note" class="mp-note" hidden></div>
+          <div id="pane-area" class="mp-area" hidden></div>
+          <div id="term-card" class="term-card"><div id="terminal-host" class="terminal-host"></div></div>
+          <div id="changes-host" class="changes-host" hidden></div>
+          <div id="permission-bar" class="composer" hidden></div>
+          <div id="pane-footer" class="ro-note" hidden></div>
+        </div>
+      </div>
+
+      <!-- 子代理只读视图：独立宿主便于 xterm 元素切换 -->
+      <div id="subagent-pane" class="pane subagent-pane" hidden>
+        <header id="subagent-header" class="d-h">
+          <div class="crumb">
+            <span id="subagent-project" class="crumb-dim"></span><span class="crumb-sep">›</span>
+            <button type="button" id="subagent-parent" class="crumb-link" title="返回父会话（Esc）"></button><span class="crumb-sep">›</span>
+            <span id="subagent-icon" class="subagent-icon"></span>
+            <b id="subagent-label" class="crumb-cur"></b>
+            <span class="tagx" title="子代理为只读视图，输入与审批请返回父会话">只读</span>
+          </div>
+          <span id="subagent-status" class="status-pill"></span>
+          <div id="subagent-actions" class="pane-actions"></div>
+        </header>
+        <div class="stage">
+          <div class="term-card"><div id="subagent-terminal-host" class="terminal-host subagent-terminal-host"></div></div>
+        </div>
+      </div>
+    </main>
+
+    <!-- 属性面板 -->
+    <aside id="inspector" class="insp" aria-label="属性面板"></aside>
+    </div>
+  </div>
+
+  <!-- 应用内确认框：替代系统 confirm 弹窗 -->
+  <div id="confirm-backdrop" class="modal-backdrop" hidden>
+    <div class="modal confirm-modal" role="alertdialog" aria-modal="true" aria-labelledby="confirm-title" aria-describedby="confirm-message">
+      <div class="confirm-ic" aria-hidden="true">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4m0 4h.01"/><path d="M10.3 3.9 2.4 17.6A2 2 0 0 0 4.1 20.6h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>
+      </div>
+      <h2 id="confirm-title"></h2>
+      <p id="confirm-message" class="confirm-msg"></p>
+      <div id="confirm-buttons" class="dialog-buttons">
+        <button type="button" id="confirm-cancel" class="btn">取消</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 命令面板 -->
+  <div id="palette-backdrop" class="modal-backdrop palette-backdrop" hidden>
+    <div class="palette" role="dialog" aria-label="命令面板" aria-modal="true">
+      <div class="pal-in">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="palette-input" placeholder="搜索会话或输入命令…" autocomplete="off" spellcheck="false" />
+      </div>
+      <div id="palette-list" class="pal-list" role="listbox"></div>
+    </div>
+  </div>
+
+  <!-- 更新设置：更新目录（局域网共享文件夹）+ 手动检查 -->
+  <div id="update-settings-backdrop" class="modal-backdrop" hidden>
+    <div class="modal update-modal" role="dialog" aria-labelledby="update-settings-title" aria-modal="true">
+      <form id="update-settings-form">
+        <h2 id="update-settings-title">检查更新</h2>
+        <p class="update-current">当前版本 <span id="update-current-version"></span></p>
+        <label>更新目录（存放新版本安装包与 latest.json 的共享文件夹）
+          <div class="cwd-row">
+            <input id="update-dir" placeholder="\\server\share\claude-nexus" />
+            <button type="button" id="btn-update-browse" class="btn">浏览…</button>
+          </div>
+        </label>
+        <div class="update-status" id="update-settings-status"></div>
+        <div class="dialog-buttons">
+          <button type="button" id="btn-update-settings-close" class="btn">关闭</button>
+          <button type="submit" class="btn white" id="btn-update-check">保存并检查</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <!-- 发现新版本：更新说明 → 下载进度 → 拉起安装器；失败可重试 -->
+  <div id="update-dialog-backdrop" class="modal-backdrop" hidden>
+    <div class="modal update-modal" role="dialog" aria-labelledby="update-dialog-title" aria-modal="true">
+      <h2 id="update-dialog-title">发现新版本</h2>
+      <p class="update-version-line"><span id="update-from"></span> → <span id="update-to" class="update-version-new"></span></p>
+      <div id="update-phase-available">
+        <pre id="update-notes" class="update-notes"></pre>
+        <p id="update-file-meta" class="update-meta"></p>
+      </div>
+      <div id="update-phase-downloading" hidden>
+        <div class="update-progress"><div id="update-progress-bar" class="update-progress-bar"></div></div>
+        <div class="update-progress-text"><span id="update-progress-percent"></span><span id="update-progress-size"></span></div>
+        <p class="update-meta">正在从更新目录复制安装包并校验…</p>
+      </div>
+      <p id="update-phase-installing" class="update-meta" hidden>校验通过，正在启动安装程序并退出面板…</p>
+      <div id="update-phase-error" class="form-error update-error" hidden></div>
+      <div class="dialog-buttons" id="update-dialog-buttons">
+        <button type="button" id="btn-update-later" class="btn">暂不更新</button>
+        <button type="button" class="btn white" id="btn-update-install">立即更新</button>
+      </div>
+    </div>
+  </div>
+  <div id="toast-container" class="toast-container" aria-live="polite" aria-atomic="false"></div>
+  <script type="module" src="vendor/boot.mjs"></script>
+<script type="module" src="renderer.js"></script>
+</body>
+</html>

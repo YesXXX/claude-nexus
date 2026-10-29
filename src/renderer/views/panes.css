@@ -1,0 +1,166 @@
+/* 终端区多窗格布局：窗格网格、分隔条、窗格头、内联批准、空占位、拖放落点层、提示条与会话标签 */
+
+/* 布局树容器：占满标签行以下的剩余高度，内部按树递归排窗格 */
+.mp-area { flex: 1; min-height: 0; min-width: 0; display: flex; position: relative; }
+.mp-area > .mp-split, .mp-area > .mp-pane { flex: 1 1 0; }
+/* 最大化或退化时只剩焦点窗格这一条路径可见：路径上的元素占满，不按原比例留白 */
+.mp-area:not([data-mode="grid"]) .mp-split > * { flex-grow: 1 !important; }
+.mp-split { flex: 1 1 0; min-width: 0; min-height: 0; display: flex; }
+.mp-split.mp-row { flex-direction: row; }
+.mp-split.mp-col { flex-direction: column; }
+
+/* 窗格之间的分隔条：8px，拖动调比例，双击恢复等分 */
+.mp-div { position: relative; z-index: 3; flex: none; }
+.mp-split.mp-row > .mp-div { width: 8px; cursor: col-resize; }
+.mp-split.mp-col > .mp-div { height: 8px; cursor: row-resize; }
+.mp-div::before {
+  content: ''; position: absolute; border-radius: 4px; background: var(--line-strong); opacity: .8;
+  transition: background .12s, box-shadow .12s;
+}
+.mp-split.mp-row > .mp-div::before { left: 3px; top: 50%; width: 2px; height: 30px; transform: translateY(-50%); }
+.mp-split.mp-col > .mp-div::before { top: 3px; left: 50%; height: 2px; width: 30px; transform: translateX(-50%); }
+.mp-div:hover::before { background: rgb(var(--fg-rgb) / .34); }
+/* 拖动中的分隔条：提亮并把两侧列数浮在旁边 */
+.mp-div.on::before { background: var(--accent); box-shadow: 0 0 0 3px rgb(var(--accent-rgb) / .18); }
+.mp-div.on::after { content: ''; position: absolute; inset: 0; background: rgb(var(--accent-rgb) / .05); }
+.mp-tip {
+  position: absolute; z-index: 40; left: 50%; top: -10px; transform: translate(-50%, -100%);
+  padding: 4px 9px; border-radius: 8px; white-space: nowrap; pointer-events: none;
+  background: var(--popup); border: 1px solid rgb(var(--accent-rgb) / .45); color: var(--text-2);
+  font: 11.5px/16px var(--mono); box-shadow: 0 6px 18px rgb(var(--shade-rgb) / .45);
+}
+.mp-split.mp-row > .mp-div .mp-tip { top: 50%; transform: translate(-50%, -50%); }
+.mp-split.mp-col > .mp-div .mp-tip { top: auto; bottom: -10px; transform: translate(-50%, 100%); }
+.mp-tip b { color: var(--accent-soft); font-weight: 600; }
+body.mp-resizing { user-select: none; }
+body.mp-resizing.mp-row-resize { cursor: col-resize; }
+body.mp-resizing.mp-col-resize { cursor: row-resize; }
+
+/* 窗格：沿用终端卡片外观，多出一个头部；焦点窗格边框与头部更亮 */
+.mp-pane { position: relative; min-width: 0; min-height: 0; }
+.mp-split > .mp-pane { flex: 1 1 0; }
+.mp-pane.focus {
+  border-color: rgb(var(--fg-rgb) / .18);
+  box-shadow: 0 0 0 1px rgb(var(--shade-rgb) / .35), 0 8px 24px rgb(var(--shade-rgb) / .25), 0 0 0 1px rgb(var(--fg-rgb) / .05);
+}
+.mp-pane:not(.focus) .xterm { opacity: .88; }
+.mp-h {
+  flex: none; height: 30px; display: flex; align-items: center; gap: 7px; min-width: 0;
+  padding: 0 4px 0 10px; border-bottom: 1px solid var(--line); background: rgb(var(--fg-rgb) / .015);
+  font-size: 12px;
+}
+.mp-pane.focus .mp-h { background: rgb(var(--fg-rgb) / .055); }
+.mp-h .si { width: 12px; height: 12px; flex: none; }
+.mp-t { color: var(--text); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; flex: 0 1 auto; }
+.mp-pane.empty .mp-t { color: var(--text-3); }
+.mp-proj { color: var(--text-4); white-space: nowrap; flex: none; font-size: 11px; }
+.mp-st { flex: none; color: var(--text-3); font-size: 12px; white-space: nowrap; }
+.mp-gap { flex: 1; }
+.mp-ib { width: 22px; height: 22px; flex: none; border-radius: 8px; display: grid; place-items: center; color: var(--text-3); }
+/* 窗格头的操作图标默认隐藏，悬停窗格头或键盘聚焦其中按钮时出现；空占位常显，便于关闭 */
+.mp-pane:not(.empty) .mp-h .mp-ib { opacity: 0; transition: opacity .12s; }
+.mp-pane .mp-h:hover .mp-ib, .mp-pane .mp-h:focus-within .mp-ib { opacity: 1; }
+.mp-ib:hover { background: var(--hover); color: var(--text); }
+.mp-ib:disabled { opacity: .35; cursor: default; background: none; color: var(--text-3); }
+.mp-ib.x:hover { color: var(--st-err); background: rgb(var(--st-err-rgb) / .09); }
+.mp-ib svg { display: block; }
+.mp-pane .tsearch { top: 38px; }
+
+/* 非焦点窗格里的会话在等批准：头部变橙并挂一条内联批准条；焦点窗格仍用底部审批条 */
+.mp-pane.attn { border-color: rgb(var(--st-perm-rgb) / .42); }
+.mp-pane.attn .mp-h { background: rgb(var(--st-perm-rgb) / .08); border-bottom-color: rgb(var(--st-perm-rgb) / .22); }
+.mp-pane.attn .mp-st { color: var(--st-perm); }
+.mp-approve {
+  flex: none; display: flex; align-items: center; gap: 8px; min-width: 0;
+  padding: 5px 6px 5px 11px; font-size: 12px; color: var(--text-2);
+  background: rgb(var(--st-perm-rgb) / .06); border-bottom: 1px solid rgb(var(--st-perm-rgb) / .16);
+}
+.mp-approve .mp-ap-t { color: var(--st-perm); flex: none; font-weight: 600; }
+.mp-approve code {
+  font: 11px/16px var(--mono); color: var(--st-perm); min-width: 0; flex: 0 1 auto;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  background: rgb(var(--shade-rgb) / .3); padding: 2px 7px; border-radius: 4px;
+}
+.mp-approve .btn { height: 22px; padding: 0 9px; font-size: 12px; flex: none; }
+
+/* 空占位：新拆出的窗格，或重启后原会话已不存在 */
+.mp-empty { flex: 1; min-height: 0; display: grid; place-items: center; background: var(--term-bg); }
+.mp-empty-in {
+  display: flex; flex-direction: column; align-items: center; gap: 7px; padding: 26px 34px;
+  border: 1.5px dashed var(--line-strong); border-radius: 12px; color: var(--text-3); font-size: 13px;
+  cursor: pointer; text-align: center;
+}
+.mp-empty-in:hover { border-color: rgb(var(--fg-rgb) / .24); color: var(--text-2); background: rgb(var(--fg-rgb) / .015); }
+.mp-empty-plus { font-size: 14px; color: var(--text-4); line-height: 1; }
+.mp-empty-sub { font-size: 12px; color: var(--text-4); max-width: 220px; }
+
+/* 窗格里的续接卡片：比全屏的略窄，上边距收紧 */
+.term-cover, #term-card { position: relative; }
+.mp-pane .term-cover { padding-top: 22px; }
+.mp-pane .dormant-card { width: min(430px, calc(100% - 30px)); }
+.mp-pane .dc-title { font-size: 13px; }
+
+/* 拖会话入窗格时的落点层：四边为拆分区，中央为替换区 */
+.mp-drop { position: absolute; inset: 0; z-index: 6; pointer-events: none; background: rgb(var(--shade-rgb) / .62); border-radius: inherit; }
+.mp-zone { position: absolute; border: 1.5px dashed rgb(var(--fg-rgb) / .13); border-radius: 12px; display: grid; place-items: center; padding: 4px; }
+.mp-zone.z-top { top: 0; left: 14%; right: 14%; height: 21%; }
+.mp-zone.z-bottom { bottom: 0; left: 14%; right: 14%; height: 21%; }
+.mp-zone.z-left { left: 0; top: 14%; bottom: 14%; width: 21%; }
+.mp-zone.z-right { right: 0; top: 14%; bottom: 14%; width: 21%; }
+.mp-zone.z-center { top: 27%; bottom: 27%; left: 27%; right: 27%; }
+.mp-zl { text-align: center; font-size: 12px; color: var(--text-3); line-height: 1.55; padding: 0 6px; }
+.mp-zl b { display: block; font-size: 13px; font-weight: 600; color: var(--text-2); }
+/* 命中的拆分区：蓝色实线加实底 */
+.mp-zone.hot {
+  border-style: solid; border-color: rgb(var(--accent-rgb) / .75);
+  background: color-mix(in srgb, var(--accent) 12%, var(--term-bg));
+}
+.mp-zone.hot .mp-zl, .mp-zone.hot .mp-zl b { color: var(--accent-soft); }
+/* 命中的替换区：绿色 */
+.mp-zone.hot.rep { border-color: rgb(var(--st-run-rgb) / .7); background: color-mix(in srgb, var(--st-run) 12%, var(--term-bg)); }
+.mp-zone.hot.rep .mp-zl, .mp-zone.hot.rep .mp-zl b { color: var(--diff-add-fg); }
+/* 满四格或尺寸不够时：四边为斜纹禁用区 */
+.mp-zone.dis {
+  border-style: solid; border-color: rgb(var(--fg-rgb) / .07);
+  background: var(--term-bg) repeating-linear-gradient(45deg, transparent 0 5px, rgb(var(--fg-rgb) / .045) 5px 9px);
+}
+.mp-zone.dis .mp-zl { color: var(--text-4); font-size: 11px; }
+.mp-zone.dis .mp-zl b { color: var(--text-3); font-weight: 500; font-size: 11px; }
+/* 跟随鼠标的幽灵会话标签，位置由脚本放在指针右下方 */
+.mp-ghost {
+  position: fixed; z-index: 9000; display: inline-flex; align-items: center; gap: 7px; pointer-events: none;
+  height: 28px; padding: 0 12px 0 9px; border-radius: 999px;
+  background: var(--raised-2); border: 1px solid rgb(var(--fg-rgb) / .28); color: var(--text);
+  font-size: 13px; white-space: nowrap; box-shadow: 0 10px 26px rgb(var(--shade-rgb) / .5);
+}
+.mp-ghost .si { width: 12px; height: 12px; flex: none; }
+body.mp-dragging { cursor: grabbing; user-select: none; }
+
+/* 侧栏：正在被拖起的行呈抬起态（提亮、下投影、左侧强调条）；已在某个窗格显示的会话行尾有网格小图标 */
+.row.mp-src {
+  background: var(--raised-2);
+  box-shadow: 0 6px 14px rgb(var(--shade-rgb) / .5), 0 0 0 1px rgb(var(--fg-rgb) / .14), inset 2px 0 0 var(--st-run);
+  transform: translateX(2px);
+}
+.row.mp-src .t, .row.mp-src .si { color: var(--text); opacity: 1; }
+.row .mp-mark { flex: none; width: 14px; height: 14px; color: var(--text-3); opacity: .9; }
+
+/* 提示条：最大化、窗口过窄只留焦点窗格、改动等视图占满详情区时出现 */
+.mp-note {
+  flex: none; display: flex; align-items: center; gap: 10px; min-width: 0;
+  padding: 7px 8px 7px 12px; border-radius: 12px; font-size: 13px; color: var(--text-2);
+  background: var(--raised); border: 1px solid var(--line-strong); box-shadow: inset 0 1px 0 var(--hi);
+}
+.mp-note .mp-note-t { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mp-note .mp-note-t b { color: var(--text); font-weight: 600; }
+.mp-chip {
+  flex: none; display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 10px;
+  border-radius: 999px; border: 1px solid var(--line-strong); background: rgb(var(--fg-rgb) / .03);
+  font-size: 12px; color: var(--text-2); white-space: nowrap; cursor: pointer;
+}
+.mp-chip:hover { background: var(--hover); color: var(--text); }
+.mp-chip .si { width: 11px; height: 11px; flex: none; }
+
+/* 标签行右侧的「← 返回 N 个窗格」：改动、收尾等视图占满详情区时出现 */
+.mp-back { height: 26px; padding: 0 10px; border-radius: 8px; font-size: 12px; color: var(--text-3); white-space: nowrap; }
+.mp-back:hover { background: var(--hover); color: var(--text); }

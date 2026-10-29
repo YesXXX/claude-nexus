@@ -1,0 +1,40 @@
+/* 会话预设：设置分节的预设列表、保存 / 改名弹窗、新建表单按钮 */
+
+.preset-list { display: flex; flex-direction: column; }
+
+.preset-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 2px;
+  border-bottom: 1px solid var(--line);
+}
+.preset-row:last-child { border-bottom: none; }
+
+.preset-info { flex: 1; min-width: 0; }
+.preset-name-line { display: flex; align-items: baseline; gap: 8px; min-width: 0; }
+.preset-name { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.preset-count { flex: none; font-size: 11px; color: var(--text-4); }
+.preset-sum {
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--text-3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.preset-ops { flex: none; display: flex; gap: 8px; }
+.preset-empty { padding: 14px 2px; color: var(--text-4); font-size: 13px; }
+
+.preset-modal { width: min(520px, calc(100vw - 48px)); }
+.preset-field { display: flex; flex-direction: column; gap: 6px; margin: 4px 0 0; }
+.preset-field span { font-size: 12px; color: var(--text-3); }
+.preset-field input { height: 32px; }
+.preset-dialog-summary {
+  margin-top: 10px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--text-3);
+  word-break: break-all;
+}
+.preset-modal .dialog-buttons { margin-top: 6px; }

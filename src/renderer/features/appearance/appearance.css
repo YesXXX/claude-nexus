@@ -1,0 +1,27 @@
+/* ---------- 设置页「外观」：皮肤缩略卡片，点选即时生效 ---------- */
+.skin-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(168px, 1fr)); gap: 12px;
+  padding: 14px 0 16px;
+}
+.skin-card {
+  display: flex; flex-direction: column; gap: 4px; padding: 8px; text-align: left;
+  border-radius: var(--r-lg); border: 1px solid var(--line);
+  background: var(--raised); color: var(--text);
+  transition: border-color .15s, box-shadow .15s;
+}
+.skin-card:hover { border-color: var(--line-strong); }
+.skin-card.on { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.skin-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* 缩略图：外框色底上放列表块与终端块，终端块左下角一条强调色 */
+.skin-pv {
+  position: relative; height: 72px; margin-bottom: 4px;
+  border-radius: var(--r-md); overflow: hidden;
+  box-shadow: inset 0 0 0 1px rgb(var(--fg-rgb) / .06);
+}
+.skin-pv-panel { position: absolute; left: 10px; top: 12px; bottom: 0; width: 34%; border-top-left-radius: var(--r-sm); }
+.skin-pv-term { position: absolute; left: calc(34% + 14px); right: 0; top: 12px; bottom: 0; border-top-left-radius: var(--r-sm); }
+.skin-pv-accent { position: absolute; left: 8px; bottom: 10px; width: 40%; height: 6px; border-radius: var(--r-pill); }
+
+.skin-name { font-size: var(--fs-md); font-weight: 600; }
+.skin-hint { font-size: var(--fs-xs); color: var(--text-3); line-height: 1.5; }

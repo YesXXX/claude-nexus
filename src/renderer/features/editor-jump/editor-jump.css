@@ -1,0 +1,48 @@
+/* ---------- diff 行悬停的外部编辑器跳转按钮与设置页命令输入 ---------- */
+
+/* 悬停按钮浮层：挂在 diff 区容器内、右缘随悬停行对齐；只让按钮本身可点 */
+.ejump-overlay {
+  position: absolute;
+  right: 16px;
+  z-index: 6;
+  pointer-events: none;
+  transform: translateY(-1px);
+}
+.ejump-overlay[hidden] { display: none; }
+
+.ejump-btn {
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 22px;
+  padding: 0 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-2);
+  background: var(--raised-2);
+  border: 1px solid var(--line);
+  box-shadow: 0 2px 8px rgb(var(--shade-rgb) / .45);
+  white-space: nowrap;
+  transition: color .15s, border-color .15s;
+}
+.ejump-btn:hover { color: var(--text); border-color: var(--text-4); }
+.ejump-btn:focus-visible { outline: none; box-shadow: 0 0 0 3px rgb(var(--fg-rgb) / .16); }
+.ejump-label { font-family: var(--mono); }
+
+/* 设置页：命令输入与预设按钮 */
+.ejump-set-ctl { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+.ejump-cmd-input {
+  width: 300px;
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-family: var(--mono);
+  color: var(--text);
+  background: rgb(var(--shade-rgb) / .22);
+  border: 1px solid var(--line);
+}
+.ejump-cmd-input:focus-visible { outline: none; border-color: var(--text-3); }
+.ejump-preset { flex: none; }

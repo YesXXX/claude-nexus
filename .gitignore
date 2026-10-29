@@ -1,0 +1,23 @@
+node_modules/
+dist/
+release/
+update/
+*.log
+.e2e-out/
+
+# 本地工具与编辑器
+.idea/
+.vscode/
+.claude/
+
+# 内部过程文档：设计、计划、评审、mockups、过程截图只留在本地，不进仓库
+实施计划/
+设计文档/
+docs/*
+!docs/使用手册.md
+!docs/开发指南.md
+!docs/发布流程.md
+!docs/images/
+
+# 项目根
+.DS_Store

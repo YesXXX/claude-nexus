@@ -1,0 +1,69 @@
+/* 自动验证：会话行徽标、属性面板节、配置对话框与输出弹窗 */
+
+.verify-badge {
+  display: inline-grid; place-items: center; flex: none;
+  min-width: 16px; height: 16px; padding: 0 3px; border-radius: 4px;
+  font: 600 11px/1 var(--mono); color: var(--text-3);
+  border: 1px solid var(--line); background: rgb(var(--fg-rgb) / .03);
+}
+button.verify-badge { cursor: pointer; }
+button.verify-badge:hover { background: var(--hover); }
+.verify-badge.passed { color: var(--st-run); border-color: rgb(var(--st-run-rgb) / .4); }
+.verify-badge.passed.reused { border-style: dashed; }
+.verify-badge.failed, .verify-badge.error { color: var(--st-err); border-color: rgb(var(--st-err-rgb) / .45); background: rgb(var(--st-err-rgb) / .08); }
+.verify-badge.timeout { color: var(--st-perm); border-color: rgb(var(--st-perm-rgb) / .45); }
+.verify-badge.queued, .verify-badge.cancelled { color: var(--text-4); }
+.verify-badge.running { color: var(--st-input); border-color: rgb(var(--st-input-rgb) / .4); }
+.verify-badge.running { animation: verify-pulse 1.2s ease-in-out infinite; }
+@keyframes verify-pulse { 50% { opacity: .45; } }
+
+/* 属性面板节 */
+.verify-sec .verify-empty { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.verify-cmd-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.verify-cmd {
+  flex: 1; min-width: 0; font: 12px/1.5 var(--mono); color: var(--text-2);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  padding: 2px 6px; border-radius: 8px; background: var(--raised); border: 1px solid var(--line);
+}
+.verify-toggle { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; color: var(--text-3); cursor: pointer; user-select: none; flex: none; }
+.verify-toggle input { margin: 0; accent-color: var(--text); }
+.verify-last { display: flex; align-items: center; gap: 6px; min-width: 0; margin-bottom: 8px; font-size: 13px; }
+.verify-last-text { color: var(--text-2); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.verify-last-meta { color: var(--text-4); font-size: 12px; margin-left: auto; flex: none; }
+.verify-none { color: var(--text-4); font-size: 12px; }
+.verify-ops { display: flex; flex-wrap: wrap; gap: 6px; }
+.verify-ops .btn, .verify-empty .btn { height: 26px; padding: 0 9px; font-size: 12px; }
+.verify-note { margin-top: 8px; color: var(--st-perm); font-size: 12px; line-height: 1.5; }
+
+/* 配置对话框 */
+.verify-cfg-modal { width: 520px; max-width: calc(100vw - 40px); display: flex; flex-direction: column; gap: 12px; }
+.verify-cfg-repo { display: flex; flex-direction: column; gap: 2px; }
+.verify-cfg-path { font: 12px/1.5 var(--mono); color: var(--text-2); word-break: break-all; }
+.verify-cfg-hint { color: var(--text-4); font-size: 12px; }
+.verify-cfg-warn {
+  color: var(--st-perm); font-size: 12px; line-height: 1.6; padding: 8px 10px; border-radius: 8px;
+  background: rgb(var(--st-input-rgb) / .06); border: 1px solid rgb(var(--st-input-rgb) / .25);
+}
+.verify-cfg-group { display: flex; flex-direction: column; gap: 10px; }
+.verify-cfg-group + .verify-cfg-group { border-top: 1px solid var(--line); padding-top: 10px; }
+.verify-cfg-gh { color: var(--text-3); font-size: 12px; }
+.verify-cfg-row { display: flex; gap: 12px; }
+.modal .verify-cfg-field { gap: 4px; }
+.modal .verify-cfg-field input { height: 32px; }
+.modal .verify-cfg-num { width: 140px; }
+.modal .verify-cfg-check { flex-direction: row; align-items: center; gap: 6px; color: var(--text-2); cursor: pointer; user-select: none; }
+.modal .verify-cfg-check input { height: auto; margin: 0; padding: 0; accent-color: var(--text); }
+.verify-cfg-modal .form-error { margin-top: 0; }
+
+/* 输出弹窗 */
+.verify-out-modal { width: 820px; max-width: calc(100vw - 40px); max-height: calc(100vh - var(--titlebar-h) - 40px); display: flex; flex-direction: column; gap: 10px; }
+.verify-out-head { display: flex; align-items: center; gap: 8px; }
+.verify-out-head .verify-badge { min-width: 20px; height: 20px; font-size: 12px; }
+.verify-out-meta { color: var(--text-3); font: 12px/1.5 var(--mono); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.verify-out-pre {
+  flex: 1; min-height: 160px; max-height: 60vh; margin: 0; overflow: auto; outline: none;
+  padding: 10px 12px; border-radius: 12px; background: var(--term-bg); border: 1px solid var(--line);
+  font: 12px/1.5 var(--mono); color: var(--text-2); white-space: pre-wrap; word-break: break-all;
+}
+.verify-out-err { margin-top: 0; }
+.verify-out-modal .dialog-buttons .btn:disabled { opacity: .45; cursor: default; }

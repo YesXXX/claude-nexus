@@ -1,0 +1,92 @@
+/* 活动时间线：占据详情区，打开时隐藏详情区其余内容 */
+#main.atl-open > :not(#timeline-view) { display: none !important; }
+
+.atl-pane { min-width: 0; background: var(--bg); position: relative; }
+.atl-head { border-bottom: 1px solid var(--line); gap: 8px; }
+.atl-title { font-size: 14px; font-weight: 600; margin: 0; white-space: nowrap; }
+.atl-count { color: var(--text-4); font-size: 12px; white-space: nowrap; }
+.atl-head .sp { flex: 1; }
+
+.atl-dd { position: relative; flex: none; }
+.atl-dd-s {
+  list-style: none; cursor: pointer; user-select: none;
+  height: 28px; display: inline-flex; align-items: center; padding: 0 10px; border-radius: 8px;
+  font-size: 12px; color: var(--text-2); border: 1px solid var(--line); background: rgb(var(--fg-rgb) / .03);
+  max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.atl-dd-s::-webkit-details-marker { display: none; }
+.atl-dd-s::after { content: '▾'; margin-left: 6px; color: var(--text-4); }
+.atl-dd[open] > .atl-dd-s, .atl-dd-s:hover { background: var(--hover); color: var(--text); }
+.atl-more-menu > .atl-dd-s::after { content: none; }
+.atl-dd-menu {
+  position: absolute; right: 0; top: calc(100% + 4px); z-index: 30; min-width: 180px; max-width: 320px;
+  max-height: 340px; overflow: auto; padding: 6px; border-radius: 12px;
+  background: var(--raised); border: 1px solid var(--line-strong); box-shadow: var(--shadow-pop);
+  display: flex; flex-direction: column; gap: 2px;
+}
+.atl-dd-i { display: flex; align-items: center; gap: 8px; padding: 5px 8px; border-radius: 8px; font-size: 13px; cursor: pointer; }
+.atl-dd-i:hover { background: var(--hover); }
+.atl-dd-i span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.atl-dd-none { color: var(--text-4); font-size: 12px; padding: 6px 8px; }
+.atl-mi {
+  text-align: left; padding: 6px 8px; border-radius: 8px; font-size: 13px; color: var(--text-2);
+  background: none; border: 0; cursor: pointer; white-space: nowrap;
+}
+.atl-mi:hover { background: var(--hover); color: var(--text); }
+.atl-dd-all { border-bottom: 1px solid var(--line); border-radius: 8px 8px 0 0; margin-bottom: 2px; }
+.atl-attn { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-2); cursor: pointer; white-space: nowrap; }
+
+.atl-body { flex: 1; min-height: 0; position: relative; display: flex; flex-direction: column; }
+.atl-list { flex: 1; min-height: 0; overflow: auto; padding: 4px 0 16px; outline: none; }
+.atl-new {
+  position: absolute; top: 8px; left: 50%; transform: translateX(-50%); z-index: 5;
+  height: 28px; padding: 0 14px; border-radius: 999px; font-size: 12px; cursor: pointer;
+  color: var(--text); background: var(--raised-2); border: 1px solid var(--line-strong); box-shadow: var(--shadow-pop);
+}
+
+.atl-day {
+  position: sticky; top: 0; z-index: 2; padding: 10px 20px 6px; font-size: 12px; font-weight: 600;
+  color: var(--text-3); background: var(--bg);
+}
+.atl-row {
+  display: grid; grid-template-columns: auto minmax(0, 170px) 22px minmax(0, 1fr) auto; align-items: baseline;
+  column-gap: 10px; padding: 6px 16px 6px 20px; border-left: 3px solid transparent; cursor: pointer; font-size: 13px;
+}
+.atl-row:hover { background: var(--hover); }
+.atl-row.attn.lv-warning { border-left-color: var(--st-perm); }
+.atl-row.attn.lv-error { border-left-color: var(--st-err); }
+.atl-row.attn.lv-info { border-left-color: var(--st-input); }
+.atl-time { font-family: var(--mono); font-size: 12px; color: var(--text-3); white-space: nowrap; }
+.atl-sess { display: flex; align-items: baseline; gap: 6px; min-width: 0; color: var(--text-2); }
+.atl-dot { width: 8px; height: 8px; border-radius: 50%; flex: none; align-self: center; background: var(--c, var(--text-4)); border: 1px solid var(--c, var(--text-4)); }
+.atl-row.ended .atl-dot { background: transparent; }
+.atl-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.atl-ended { display: none; color: var(--text-4); flex: none; }
+.atl-row.ended .atl-ended { display: inline; }
+.atl-row.ended .atl-label { color: var(--text-3); }
+.atl-ic { text-align: center; }
+.atl-main { min-width: 0; display: flex; gap: 8px; align-items: baseline; }
+.atl-t { color: var(--text); white-space: nowrap; flex: none; max-width: 60%; overflow: hidden; text-overflow: ellipsis; }
+.atl-d { color: var(--text-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.atl-row.lv-error .atl-t { color: var(--st-err); }
+.atl-exp {
+  width: 22px; height: 20px; border-radius: 4px; border: 0; background: none; color: var(--text-3); cursor: pointer;
+}
+.atl-exp:hover { background: var(--active); color: var(--text); }
+.atl-recent { grid-column: 4 / 6; display: flex; flex-direction: column; gap: 2px; padding: 4px 0 2px; }
+.atl-rl { font-family: var(--mono); font-size: 12px; color: var(--text-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.atl-foot { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 14px 0; }
+.atl-empty { color: var(--text-4); font-size: 13px; padding: 40px 0; }
+
+/* 属性面板「最近活动」 */
+.atl-ri-list { display: flex; flex-direction: column; gap: 3px; }
+.atl-ri { display: grid; grid-template-columns: auto 18px minmax(0, 1fr); gap: 6px; align-items: baseline; font-size: 12px; }
+.atl-ri-t { font-family: var(--mono); font-size: 11px; color: var(--text-4); }
+.atl-ri-ic { text-align: center; }
+.atl-ri-x { color: var(--text-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.atl-ri.lv-error .atl-ri-x { color: var(--st-err); }
+.atl-ri.lv-warning .atl-ri-x { color: var(--st-perm); }
+/* 节标题右侧的「全部」：小号文字链接 */
+.atl-ri-all { margin-left: auto; font-size: 12px; font-weight: 400; color: var(--text-3); letter-spacing: 0; }
+.atl-ri-all:hover { color: var(--text); }

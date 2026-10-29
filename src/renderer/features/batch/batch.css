@@ -1,0 +1,81 @@
+/* 批量派发：表单方案数、会话行批次标记与批次对比视图 */
+
+.wt-field.wt-count-field { flex: none; }
+.wt-count-field input { width: 3.2ch; text-align: center; -moz-appearance: textfield; }
+.wt-count-field input::-webkit-inner-spin-button { opacity: .6; }
+.batch-note { color: var(--text-3); }
+.batch-mode .send { background: var(--st-run); }
+
+/* 属性面板状态分区里的批次标记：点击打开对比 */
+.batch-marker {
+  display: inline-grid; place-items: center; flex: none; height: 18px; padding: 0 7px; border-radius: 999px;
+  font-size: 11px; line-height: 1; color: var(--text-3); cursor: pointer;
+  border: 1px solid var(--line-strong); background: rgb(var(--fg-rgb) / .03);
+}
+.batch-marker:hover { background: var(--hover); color: var(--text); }
+
+/* 对比视图 */
+.batch-modal {
+  width: min(1280px, calc(100vw - 40px)); max-height: calc(100vh - var(--titlebar-h) - 40px);
+  display: flex; flex-direction: column; gap: 10px; padding: 18px 18px 16px;
+}
+.batch-head { display: flex; align-items: flex-start; gap: 12px; }
+.batch-titles { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.batch-title { margin: 0; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.batch-meta { color: var(--text-3); font: 12px/1.5 var(--mono); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.batch-tools { display: flex; gap: 6px; flex: none; }
+.batch-tools .btn { height: 28px; padding: 0 10px; font-size: 13px; }
+.batch-tools .btn[hidden] { display: none; }
+.batch-prompt {
+  color: var(--text-2); font-size: 13px; line-height: 1.6; padding: 6px 10px; border-radius: 8px;
+  background: var(--raised); border: 1px solid var(--line);
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; white-space: pre-wrap;
+}
+.batch-prompt[hidden] { display: none; }
+.batch-load-err { margin-top: 0; }
+.batch-cols {
+  flex: 1; min-height: 0; overflow: auto; display: grid; gap: 10px;
+  grid-template-columns: repeat(var(--batch-n, 3), minmax(200px, 1fr));
+}
+.batch-empty { color: var(--text-4); font-size: 13px; padding: 20px; }
+.batch-col {
+  display: flex; flex-direction: column; gap: 8px; min-width: 0; padding: 12px;
+  border-radius: 12px; border: 1px solid var(--line-strong); background: rgb(var(--shade-rgb) / .14);
+}
+.batch-col.kept { border-color: rgb(var(--st-run-rgb) / .55); background: rgb(var(--st-run-rgb) / .05); }
+.batch-col.gone { opacity: .6; }
+.batch-col-h { display: flex; align-items: center; gap: 6px; min-width: 0; }
+.batch-jump {
+  flex: none; height: 22px; padding: 0 7px; border-radius: 8px; cursor: pointer;
+  font: 600 12px/1 var(--mono); color: var(--text); background: var(--raised-2); border: 1px solid var(--line-strong);
+}
+.batch-jump:hover:not(:disabled) { background: var(--active); }
+.batch-jump:disabled { cursor: default; color: var(--text-3); }
+.batch-col-label { flex: 1; min-width: 0; font-size: 13px; color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.batch-stat { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 12px; }
+.batch-st { font-weight: 600; }
+.batch-st-gone { color: var(--text-4); }
+.batch-dim { color: var(--text-4); font-size: 12px; }
+.batch-branch { font: 11.5px/1.4 var(--mono); color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.batch-changes { display: flex; flex-direction: column; gap: 6px; min-height: 0; }
+.batch-sum { display: flex; align-items: baseline; gap: 8px; font-size: 13px; }
+.batch-col .add { color: var(--st-run); font-family: var(--mono); font-size: 12px; }
+.batch-col .del { color: var(--st-err); font-family: var(--mono); font-size: 12px; }
+.batch-files { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+.batch-file { display: flex; gap: 8px; align-items: baseline; font: 11.5px/1.5 var(--mono); min-width: 0; }
+.batch-fpath { flex: 1; min-width: 0; color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.batch-file.k-added .batch-fpath { color: var(--st-run); }
+.batch-file.k-deleted .batch-fpath { color: var(--st-err); text-decoration: line-through; }
+.batch-fnum { flex: none; display: inline-flex; gap: 5px; color: var(--text-4); }
+.batch-err { color: var(--st-err); font-size: 12px; }
+.batch-verify { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-2); }
+.batch-ops { display: flex; gap: 6px; margin-top: auto; padding-top: 4px; }
+.batch-ops .btn { flex: 1; justify-content: center; text-align: center; height: 28px; padding: 0 8px; font-size: 13px; }
+.batch-ops .btn:disabled, .batch-tools .btn:disabled { opacity: .45; cursor: default; }
+.batch-kept-tag { color: var(--st-run); }
+
+/* 窄窗口：改为纵向卡片 */
+@media (max-width: 960px) {
+  .batch-cols { grid-template-columns: 1fr; }
+  .batch-head { flex-wrap: wrap; }
+}

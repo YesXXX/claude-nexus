@@ -1,0 +1,40 @@
+name: 问题反馈
+description: 报告 bug 或异常行为
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: 发生了什么
+      description: 期望的表现与实际的表现
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 复现步骤
+      placeholder: |
+        1. 新建会话，勾选独立工作区
+        2. ...
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Claude Nexus 版本
+      description: 设置页「版本与更新」里可以看到
+    validations:
+      required: true
+  - type: input
+    id: env
+    attributes:
+      label: 环境
+      placeholder: Windows 11 23H2 / claude --version 输出
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: 日志
+      description: ~/.claude-session-panel/logs/ 最新日志里的相关片段，贴之前去掉路径、仓库名等敏感信息
+      render: text

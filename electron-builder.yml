@@ -1,0 +1,29 @@
+# electron-builder 配置：NSIS 一键安装包（装到用户目录免管理员）
+appId: io.github.yesxxx.claude-nexus   # 必须与主进程 APP_AUMID 一致——决定 Toast 通知身份与通知中心点击直达的可靠性
+productName: Claude Nexus
+icon: build/icon.png
+directories:
+  output: release
+# node-pty 1.1.0 自带 N-API prebuilds（prebuilds/win32-x64/*.node，ABI 跨 Node/Electron 稳定，开发态实际加载的就是它）；
+# 跳过 electron-builder 内置原生重编译——无需 Visual Studio，且重编译并无必要
+npmRebuild: false
+files:
+  - dist/**
+  - scripts/hook-client.js
+  - scripts/mock-claude.js
+  - assets/**
+asarUnpack:
+  - node_modules/node-pty/**   # 原生 .node 模块不能进 asar
+  - scripts/hook-client.js     # 由 Claude Code 外部 node 进程执行，asar 内文件外部进程不可读
+  - scripts/mock-claude.js     # 同为外部 node 进程执行
+win:
+  target: nsis
+  icon: build/icon.ico
+nsis:
+  oneClick: true
+  shortcutName: Claude Nexus
+  # 安装器身份（卸载注册表键）。默认由 appId 派生，appId 改过一次，这里固定为旧 appId 派生出的值，
+  # 让已安装的旧版本原地覆盖升级，而不是装出第二份。不要改动
+  guid: 95c54697-a246-56a6-ad9d-ae0eec7cd25d
+  # 安装包文件名：scripts/gen-update-manifest.js 与 publish-update.js 按此格式定位，改动需同步
+  artifactName: ClaudeNexus-Setup-v${version}.${ext}

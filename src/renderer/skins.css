@@ -1,0 +1,158 @@
+/* ============================================================
+   皮肤：每套一个 :root[data-skin="…"] 块，覆盖 renderer.css :root 里全部颜色字面量变量。
+   石墨就是 :root 默认值，不另写块。皮肤清单与标题栏颜色在 src/shared/skins.ts，
+   --chrome、预览色与那边一致、每个颜色变量都被覆盖，由 tests/skins.test.ts 保证。
+   带 -rgb 后缀的变量是同名颜色的 R G B 三元组，两者须一致。
+   ============================================================ */
+
+/* 夜蓝：冷色深底，强调色偏蓝 */
+:root[data-skin="midnight"] {
+  --chrome: #0b0f17;
+  --panel: #0f1520;
+  --bg: #121a27;
+  --raised: #1a2333;
+  --raised-2: #222d40;
+  --popup: #111826;
+  --fg-rgb: 190 210 255;
+  --shade-rgb: 0 2 8;
+  --text: #e3e9f3;
+  --text-2: #a9b5c8;
+  --text-3: #8190aa;
+  --text-4: #5f6c85;
+  --term-bg: #0a0e15;
+  --tree: #2a3548;
+  --btn-pri-bg: #8fb8ff;
+  --btn-pri-hover: #a9c8ff;
+  --btn-pri-fg: #0b0f17;
+  --btn-danger-bg: #f06e78;
+  --btn-danger-hover: #ff858f;
+  --btn-danger-fg: #1a0508;
+  --accent: #8fb8ff;
+  --accent-rgb: 143 184 255;
+  --accent-soft: #cfe2ff;
+  --st-run: #5fd4a0;
+  --st-perm: #ffb46b;
+  --st-input: #f2d675;
+  --st-done: #8190aa;
+  --st-err: #ff7a85;
+  --st-lost: #8190aa;
+  --st-run-rgb: 95 212 160;
+  --st-perm-rgb: 255 180 107;
+  --st-input-rgb: 242 214 117;
+  --st-err-rgb: 255 122 133;
+  --icon-ink: #0e131c;
+  --icon-ink-perm: #1a1006;
+  --perm-soft: #f5dcae;
+  --err-soft: #ffa3ab;
+  --diff-add-fg: #c4ecd9;
+  --diff-del-fg: #f3c6cb;
+  --syn-kw: #c3a6f7;
+  --syn-str: #9fcdf7;
+  --syn-num: #f2b483;
+  --syn-type: #7fd6cc;
+  --syn-fn: #e8d08e;
+  --syn-prop: #a3c4f0;
+  --syn-tag: #f29fb0;
+  --syn-attr: #dcc093;
+  --syn-meta: #aab2e6;
+  --term-background: #0a0e15;
+  --term-foreground: #cdd6e4;
+  --term-cursor: #e3e9f3;
+  --term-selection-background: rgb(160 190 255 / .22);
+  --term-black: #151c28;
+  --term-red: #ff7a85;
+  --term-green: #7ee0a8;
+  --term-yellow: #f2d675;
+  --term-blue: #8fb8ff;
+  --term-magenta: #c9a0f0;
+  --term-cyan: #7fd4f5;
+  --term-white: #cdd6e4;
+  --term-bright-black: #63718b;
+  --term-bright-red: #ff9aa2;
+  --term-bright-green: #9eeac0;
+  --term-bright-yellow: #ffe49a;
+  --term-bright-blue: #b0ccff;
+  --term-bright-magenta: #dbbaf5;
+  --term-bright-cyan: #a8e3fa;
+  --term-bright-white: #f4f7fc;
+  --search-match-bg: #47401a;
+  --search-match-ruler: #c99a1e;
+  --search-active-bg: #8a5d00;
+  --search-active-border: #ffd866;
+}
+
+/* 暖灰：暖色深底，文字与状态色对比度不低于石墨 */
+:root[data-skin="warm"] {
+  --chrome: #161412;
+  --panel: #1b1916;
+  --bg: #201d1a;
+  --raised: #2a2622;
+  --raised-2: #34302b;
+  --popup: #1e1b18;
+  --fg-rgb: 255 240 220;
+  --shade-rgb: 6 4 2;
+  --text: #ede6dc;
+  --text-2: #bdb3a6;
+  --text-3: #9c9285;
+  --text-4: #776e64;
+  --term-bg: #141210;
+  --tree: #3a352f;
+  --btn-pri-bg: #e3a77a;
+  --btn-pri-hover: #edb98f;
+  --btn-pri-fg: #1b1611;
+  --btn-danger-bg: #e8736a;
+  --btn-danger-hover: #f2877e;
+  --btn-danger-fg: #1c0705;
+  --accent: #e3a77a;
+  --accent-rgb: 227 167 122;
+  --accent-soft: #f5d6bd;
+  --st-run: #8fcf8f;
+  --st-perm: #f9ba7a;
+  --st-input: #f4dc8e;
+  --st-done: #9c9285;
+  --st-err: #ef7f73;
+  --st-lost: #9c9285;
+  --st-run-rgb: 143 207 143;
+  --st-perm-rgb: 249 186 122;
+  --st-input-rgb: 244 220 142;
+  --st-err-rgb: 239 127 115;
+  --icon-ink: #181512;
+  --icon-ink-perm: #1c1206;
+  --perm-soft: #f0d6a8;
+  --err-soft: #f5a69c;
+  --diff-add-fg: #cfe8cc;
+  --diff-del-fg: #f0c9c2;
+  --syn-kw: #c9a9e8;
+  --syn-str: #a9c9e0;
+  --syn-num: #eeb07c;
+  --syn-type: #8ccfbf;
+  --syn-fn: #e3c98a;
+  --syn-prop: #a8c0dc;
+  --syn-tag: #ec9f9f;
+  --syn-attr: #d8bc8e;
+  --syn-meta: #b0aed6;
+  --term-background: #141210;
+  --term-foreground: #ddd5ca;
+  --term-cursor: #ede6dc;
+  --term-selection-background: rgb(255 240 220 / .18);
+  --term-black: #24201c;
+  --term-red: #ef7f73;
+  --term-green: #9fd39a;
+  --term-yellow: #e8cc78;
+  --term-blue: #92b4d8;
+  --term-magenta: #c9a0d8;
+  --term-cyan: #8fcfc8;
+  --term-white: #ddd5ca;
+  --term-bright-black: #7a7166;
+  --term-bright-red: #f59a90;
+  --term-bright-green: #b6e0b1;
+  --term-bright-yellow: #f2dc98;
+  --term-bright-blue: #afc9e6;
+  --term-bright-magenta: #dbbbe6;
+  --term-bright-cyan: #ade0da;
+  --term-bright-white: #faf6f0;
+  --search-match-bg: #4d3c14;
+  --search-match-ruler: #c99a1e;
+  --search-active-bg: #8a5d00;
+  --search-active-border: #ffd866;
+}

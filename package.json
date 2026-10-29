@@ -1,0 +1,65 @@
+{
+  "name": "claude-nexus",
+  "version": "1.7.0",
+  "description": "Windows 原生的 Claude Code 多会话指挥台：多会话并行、一键审批、独立工作区、改动审阅与批注",
+  "author": "YesXXX",
+  "homepage": "https://github.com/YesXXX/claude-nexus",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/YesXXX/claude-nexus.git"
+  },
+  "bugs": {
+    "url": "https://github.com/YesXXX/claude-nexus/issues"
+  },
+  "keywords": [
+    "claude",
+    "claude-code",
+    "electron",
+    "terminal",
+    "git-worktree",
+    "ai-agent",
+    "windows"
+  ],
+  "main": "dist/main/index.js",
+  "scripts": {
+    "build": "node scripts/clean-dist.js && tsc -p tsconfig.node.json && tsc -p tsconfig.renderer.json && npm run copy-renderer",
+    "copy-renderer": "node scripts/copy-renderer.js",
+    "check": "node scripts/check-renderer.js",
+    "typecheck": "tsc -p tsconfig.node.json --noEmit && tsc -p tsconfig.renderer.json --noEmit && tsc -p tsconfig.test.json",
+    "verify": "npm run typecheck && npm run check && npm test",
+    "start": "npm run build && electron .",
+    "start:mock": "npm run build && electron .",
+    "rebuild": "electron-rebuild -f -w node-pty",
+    "dist": "npm run gen-icon && npm run build && electron-builder --win nsis && node scripts/gen-update-manifest.js",
+    "dist:unsigned": "npm run gen-icon && npm run build && electron-builder --win nsis && node scripts/gen-update-manifest.js --unsigned",
+    "gen-icon": "node scripts/gen-icon.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "e2e": "node scripts/e2e/run.js",
+    "keygen": "npm run build && node scripts/gen-update-keypair.js",
+    "publish-update": "npm run build && node scripts/publish-update.js",
+    "publish-github": "npm run build && node scripts/publish-github.js"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.4"
+  },
+  "devDependencies": {
+    "@electron/rebuild": "^4.2.0",
+    "electron": "^44.1.1",
+    "electron-builder": "^26.15.3",
+    "png-to-ico": "^3.0.2",
+    "sharp": "^0.35.5",
+    "typescript": "^7.0.2",
+    "vitest": "^4.1.11"
+  },
+  "dependencies": {
+    "@xterm/addon-fit": "^0.11.0",
+    "@xterm/addon-search": "^0.16.0",
+    "@xterm/headless": "^6.0.0",
+    "@xterm/xterm": "^6.0.0",
+    "ansi_up": "^6.0.6",
+    "node-pty": "^1.1.0",
+    "uuid": "^14.0.2"
+  }
+}

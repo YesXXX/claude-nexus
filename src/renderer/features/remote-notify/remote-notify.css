@@ -1,0 +1,46 @@
+/* 远程通知设置弹窗 */
+
+.rn-modal { width: min(720px, calc(100vw - 48px)); max-height: calc(100vh - var(--titlebar-h) - 32px); overflow-y: auto; }
+.rn-modal form { gap: 12px; }
+.modal label.rn-check {
+  flex-direction: row; align-items: center; gap: 6px; color: var(--text-2); font-size: 13px; cursor: pointer; user-select: none;
+}
+.rn-check input[type="checkbox"], .rn-check input[type="radio"], .rn-target input[type="checkbox"] {
+  height: auto; margin: 0; padding: 0; accent-color: var(--text);
+}
+.rn-row { display: grid; grid-template-columns: 76px minmax(0, 1fr); gap: 10px; align-items: start; }
+.rn-lab { color: var(--text-3); font-size: 13px; padding-top: 6px; }
+.rn-body { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.rn-line { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 14px; color: var(--text-3); font-size: 13px; }
+.rn-events { display: flex; flex-wrap: wrap; gap: 6px 14px; padding-top: 5px; }
+.modal input.rn-num { width: 64px; height: 28px; padding: 0 8px; border-radius: 8px; }
+.modal input.rn-time { width: 74px; height: 28px; padding: 0 8px; border-radius: 8px; }
+.rn-err { color: var(--st-err); font-size: 12px; }
+.rn-warn { color: var(--st-input); font-size: 13px; }
+.rn-error { margin-top: 0; }
+.rn-add { align-self: flex-start; }
+
+.rn-targets { display: flex; flex-direction: column; gap: 8px; }
+.rn-targets.empty::before { content: '尚未添加目标'; color: var(--text-4); font-size: 12px; padding-top: 6px; }
+.rn-target {
+  display: flex; flex-direction: column; gap: 6px; padding: 10px; border-radius: 12px;
+  border: 1px solid var(--line); background: rgb(var(--fg-rgb) / .02);
+}
+.rn-t-head { display: flex; align-items: center; gap: 8px; }
+.modal .rn-target input[type="text"], .modal .rn-target input[type="password"] { height: 30px; padding: 0 8px; border-radius: 8px; min-width: 0; }
+.rn-t-name { flex: 1; }
+.rn-t-platform {
+  height: 30px; padding: 0 6px; border-radius: 8px; background: var(--raised); color: var(--text);
+  border: 1px solid var(--line-strong); font-size: 13px;
+}
+.rn-t-secretbox { display: flex; align-items: center; gap: 8px; }
+.rn-t-secretbox[hidden] { display: none; }
+.rn-t-secret { flex: 1; }
+.rn-t-tip { color: var(--text-4); font-size: 12px; display: none; }
+.rn-target[data-platform="dingtalk"] .rn-t-tip { display: inline; }
+.rn-hint { color: var(--st-input); font-size: 12px; }
+.rn-hint.err { color: var(--st-err); }
+.rn-t-foot { display: flex; align-items: center; gap: 8px; }
+.rn-t-last { flex: 1; min-width: 0; color: var(--text-4); font-size: 12px; overflow-wrap: anywhere; }
+.rn-t-last.ok { color: var(--st-run); }
+.rn-t-last.fail { color: var(--st-err); }
