@@ -1,3 +1,5 @@
+
+https://github.com/user-attachments/assets/51bf959d-d11c-49b1-98bf-4a31cfc909c4
 <div align="center">
 
 <img src="build/icon.png" width="96" alt="Claude Nexus" />
@@ -13,6 +15,11 @@
 ![license](https://img.shields.io/github/license/YesXXX/claude-nexus)
 ![release](https://img.shields.io/github/v/release/YesXXX/claude-nexus)
 ![platform](https://img.shields.io/badge/platform-Windows%2010%20%7C%2011-blue)
+
+视频介绍
+
+https://github.com/user-attachments/assets/319a9462-5fe8-4c35-a5c9-fec0e46c8662
+
 
 </div>
 
