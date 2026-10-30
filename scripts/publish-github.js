@@ -61,7 +61,19 @@ async function api(token, method, url, body, headers = {}) {
       ...headers,
     },
     body: body instanceof Buffer ? body : body ? JSON.stringify(body) : undefined,
+    redirect: 'manual',
   });
+  if (res.status >= 300 && res.status < 400) {
+    const location = res.headers.get('location') || '';
+    const target = location ? new URL(location, url) : null;
+    // GitHub 对改名或转移的仓库会重定向到同一 API 域名下的新地址，这种照常跟随；
+    // 跳到别的域名说明请求被代理或网关截走了，自动跟随只会落到无关页面拿到 404，被误判成资源不存在
+    if (target && target.host === new URL(url).host) return api(token, method, target.href, body, headers);
+    throw new Error(
+      `${method} ${url} 被重定向到 ${location || '（无 Location）'}，请求没有到达 GitHub API，` +
+        `可能是网络代理或网关拦截了 ${new URL(url).host}`,
+    );
+  }
   if (res.status === 404) return null;
   if (!res.ok) {
     const text = await res.text().catch(() => '');
